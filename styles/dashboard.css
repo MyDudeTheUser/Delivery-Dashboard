@@ -1,0 +1,99 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+header {
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+header h1 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+#dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+    margin-top: 0;
+    color: #2c3e50;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+}
+
+/* System Health Specifics */
+.system-health-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.system-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.system-item h3 {
+    margin: 0 0 1rem 0;
+    text-align: center;
+}
+
+.gauges-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.gauge {
+    width: 100px;
+    text-align: center;
+}
+
+.gauge-label {
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+    color: #555;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    text-transform: capitalize;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.status-green { background-color: #27ae60; }
+.status-yellow { background-color: #f39c12; }
+.status-red { background-color: #e74c3c; }

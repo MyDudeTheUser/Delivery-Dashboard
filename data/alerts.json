@@ -1,0 +1,12 @@
+[
+  {
+    "system": "Blaze",
+    "severity": "High",
+    "message": "Memory usage exceeds 85% threshold."
+  },
+  {
+    "system": "iCost",
+    "severity": "Medium",
+    "message": "API response time degraded by 20%."
+  }
+]

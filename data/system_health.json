@@ -1,0 +1,14 @@
+[
+  {
+    "system": "Alfresco",
+    "status": "green",
+    "cpu": 25,
+    "memory": 40
+  },
+  {
+    "system": "Blaze",
+    "status": "yellow",
+    "cpu": 75,
+    "memory": 60
+  }
+]
