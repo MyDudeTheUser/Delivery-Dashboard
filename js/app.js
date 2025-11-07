@@ -1,21 +1,19 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const fetchData = (url) => {
-        return fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Network response was not ok for ${url}`);
-                }
-                const contentType = response.headers.get("content-type");
-                if (contentType && contentType.includes("application/json")) {
-                    return response.json();
-                }
-                return response.text();
-            })
-            .catch(error => {
-                console.error(`Fetch error for ${url}:`, error);
-                // Return a default state or null to prevent breaking the chain
-                return null;
-            });
+    const fetchData = async (url) => {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Network response was not ok for ${url}`);
+            }
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            }
+            return await response.text();
+        } catch (error) {
+            console.error(`Fetch error for ${url}:`, error);
+            return null; // Return null to prevent breaking subsequent calls
+        }
     };
 
     const renderSystemHealth = (data) => {
@@ -181,8 +179,17 @@ document.addEventListener("DOMContentLoaded", function() {
         container.innerHTML = content;
     };
 
-    fetchData("data/system_health.json").then(renderSystemHealth);
-    fetchData("data/alerts.json").then(renderAlerts);
-    fetchData("data/sprint_status.csv").then(renderSprintStatus);
-    fetchData("data/releases.json").then(renderUpcomingReleases);
+    const fetchAllDataAndRender = () => {
+        console.log("Refreshing dashboard data...");
+        fetchData("data/system_health.json").then(renderSystemHealth);
+        fetchData("data/alerts.json").then(renderAlerts);
+        fetchData("data/sprint_status.csv").then(renderSprintStatus);
+        fetchData("data/releases.json").then(renderUpcomingReleases);
+    };
+
+    // Initial load
+    fetchAllDataAndRender();
+
+    // Refresh data every 30 seconds
+    setInterval(fetchAllDataAndRender, 30000);
 });
