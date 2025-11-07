@@ -97,3 +97,15 @@ th {
 .status-green { background-color: #27ae60; }
 .status-yellow { background-color: #f39c12; }
 .status-red { background-color: #e74c3c; }
+
+/* Responsive Design for smaller screens */
+@media (max-width: 768px) {
+    #dashboard-container {
+        grid-template-columns: 1fr; /* Stack sections vertically */
+        padding: 1rem;
+    }
+
+    header {
+        padding: 1rem;
+    }
+}

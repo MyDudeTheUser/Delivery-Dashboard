@@ -65,9 +65,19 @@ document.addEventListener("DOMContentLoaded", function() {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 cutout: '80%',
-                plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                events: [] // Disable all events
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.raw}%`;
+                            }
+                        }
+                    }
+                }
             }
         });
     };
@@ -93,9 +103,16 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
         // Simple CSV to HTML table conversion
+        const headerTooltips = {
+            sprint_name: "The name of the development sprint.",
+            status: "Current status of the sprint (e.g., In Progress, Completed).",
+            blockers: "Number of issues currently blocking progress.",
+            end_date: "The planned end date for the sprint."
+        };
         const rows = data.trim().split('\n').map(row => row.split(','));
         let content = `<h2 id="sprint-status-heading">Sprint Status</h2><table>`;
-        content += `<thead><tr>${rows[0].map(header => `<th>${header.replace(/_/g, ' ')}</th>`).join('')}</tr></thead>`;
+        const headers = rows[0];
+        content += `<thead><tr>${headers.map(header => `<th title="${headerTooltips[header] || ''}">${header.replace(/_/g, ' ')}</th>`).join('')}</tr></thead>`;
         content += `<tbody>`;
         rows.slice(1).forEach(row => {
             content += `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`;
