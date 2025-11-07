@@ -88,12 +88,32 @@ document.addEventListener("DOMContentLoaded", function() {
             container.innerHTML = `<h2 id="alerts-heading">Alerts</h2><p>Could not load data.</p>`;
             return;
         }
-        let content = `<h2 id="alerts-heading">Alerts</h2><ul>`;
-        data.forEach(alert => {
-            content += `<li><strong>${alert.system} (${alert.severity}):</strong> ${alert.message}</li>`;
+
+        // Add heading and filter input
+        container.innerHTML = `
+            <h2 id="alerts-heading">Alerts</h2>
+            <input type="text" id="alerts-filter" placeholder="Filter alerts..." aria-label="Filter alerts">
+            <ul id="alerts-list"></ul>
+        `;
+
+        const listElement = container.querySelector('#alerts-list');
+        const filterInput = container.querySelector('#alerts-filter');
+
+        const updateList = (alerts) => {
+            listElement.innerHTML = alerts.map(alert => 
+                `<li><strong>${alert.system} (${alert.severity}):</strong> ${alert.message}</li>`
+            ).join('');
+        };
+
+        // Initial render
+        updateList(data);
+
+        // Add event listener for filtering
+        filterInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredAlerts = data.filter(alert => alert.message.toLowerCase().includes(searchTerm) || alert.system.toLowerCase().includes(searchTerm));
+            updateList(filteredAlerts);
         });
-        content += `</ul>`;
-        container.innerHTML = content;
     };
 
     const renderSprintStatus = (data) => {

@@ -38,6 +38,16 @@ section h2 {
     padding-bottom: 0.5rem;
 }
 
+/* Filter input styling */
+#alerts-filter {
+    width: calc(100% - 20px); /* Full width minus padding */
+    padding: 8px 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
 /* System Health Specifics */
 .system-health-grid {
     display: grid;
