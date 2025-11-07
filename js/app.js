@@ -179,12 +179,27 @@ document.addEventListener("DOMContentLoaded", function() {
         container.innerHTML = content;
     };
 
+    const renderKnowledgeHub = (data) => {
+        const container = document.getElementById("knowledge-hub");
+        if (!data) {
+            container.innerHTML = `<h2 id="knowledge-hub-heading">Knowledge Hub</h2><p>Could not load data.</p>`;
+            return;
+        }
+        let content = `<h2 id="knowledge-hub-heading">Knowledge Hub</h2><ul>`;
+        data.forEach(item => {
+            content += `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title}</a> [${item.category}]</li>`;
+        });
+        content += `</ul>`;
+        container.innerHTML = content;
+    };
+
     const fetchAllDataAndRender = () => {
         console.log("Refreshing dashboard data...");
         fetchData("data/system_health.json").then(renderSystemHealth);
         fetchData("data/alerts.json").then(renderAlerts);
         fetchData("data/sprint_status.csv").then(renderSprintStatus);
         fetchData("data/releases.json").then(renderUpcomingReleases);
+        fetchData("data/knowledge_hub.json").then(renderKnowledgeHub);
     };
 
     // Initial load
