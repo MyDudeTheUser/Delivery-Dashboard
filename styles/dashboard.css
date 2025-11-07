@@ -48,6 +48,16 @@ section h2 {
     font-size: 1em;
 }
 
+/* Filter input styling */
+#sprint-filter {
+    width: calc(100% - 20px); /* Full width minus padding */
+    padding: 8px 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
 /* System Health Specifics */
 .system-health-grid {
     display: grid;
