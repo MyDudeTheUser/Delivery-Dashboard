@@ -22,26 +22,28 @@ document.addEventListener("DOMContentLoaded", function() {
             container.innerHTML = `<h2 id="system-health-heading">System Health</h2><p>Could not load data.</p>`;
             return;
         }
-        let content = `<h2 id="system-health-heading">System Health</h2><div class="system-health-grid">`;
-        data.forEach(system => {
-            content += `
-                <div class="system-item">
-                    <h3>${system.system} <span class="status-dot status-${system.status}"></span></h3>
-                    <div class="gauges-container">
-                        <div class="gauge">
-                            <canvas id="cpu-gauge-${system.system}"></canvas>
-                            <div class="gauge-label">CPU</div>
-                        </div>
-                        <div class="gauge">
-                            <canvas id="mem-gauge-${system.system}"></canvas>
-                            <div class="gauge-label">Memory</div>
+        // One-time setup
+        if (!container.querySelector('.system-health-grid')) {
+            let content = `<h2 id="system-health-heading">System Health</h2><div class="system-health-grid">`;
+            data.forEach(system => {
+                content += `
+                    <div class="system-item" id="system-item-${system.system}">
+                        <h3>${system.system} <span class="status-dot status-${system.status}"></span></h3>
+                        <div class="gauges-container">
+                            <div class="gauge">
+                                <canvas id="cpu-gauge-${system.system}"></canvas>
+                                <div class="gauge-label">CPU</div>
+                            </div>
+                            <div class="gauge">
+                                <canvas id="mem-gauge-${system.system}"></canvas>
+                                <div class="gauge-label">Memory</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
-        });
-        content += `</div>`;
-        container.innerHTML = content;
+                `;
+            });
+            container.innerHTML = content + `</div>`;
+        }
 
         // After setting the HTML, render the charts
         data.forEach(system => {
@@ -86,12 +88,18 @@ document.addEventListener("DOMContentLoaded", function() {
             container.innerHTML = `<h2 id="releases-heading">Upcoming Releases</h2><p>Could not load data.</p>`;
             return;
         }
-        let content = `<h2 id="releases-heading">Upcoming Releases</h2><ul>`;
-        data.forEach(release => {
-            content += `<li><strong>${release.name}</strong> - ${release.date} (${release.systems.join(', ')})</li>`;
-        });
-        content += `</ul>`;
-        container.innerHTML = content;
+        // One-time setup
+        if (!container.querySelector('ul')) {
+            container.innerHTML = `<h2 id="releases-heading">Upcoming Releases</h2><ul id="releases-list"></ul>`;
+        }
+
+        // Update content
+        const list = container.querySelector('#releases-list');
+        if (list) {
+            list.innerHTML = data.map(release => 
+                `<li><strong>${release.name}</strong> - ${release.date} (${release.systems.join(', ')})</li>`
+            ).join('');
+        }
     };
 
     const renderKnowledgeHub = (data) => {
@@ -100,12 +108,18 @@ document.addEventListener("DOMContentLoaded", function() {
             container.innerHTML = `<h2 id="knowledge-hub-heading">Knowledge Hub</h2><p>Could not load data.</p>`;
             return;
         }
-        let content = `<h2 id="knowledge-hub-heading">Knowledge Hub</h2><ul>`;
-        data.forEach(item => {
-            content += `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title}</a> [${item.category}]</li>`;
-        });
-        content += `</ul>`;
-        container.innerHTML = content;
+        // One-time setup
+        if (!container.querySelector('ul')) {
+            container.innerHTML = `<h2 id="knowledge-hub-heading">Knowledge Hub</h2><ul id="knowledge-hub-list"></ul>`;
+        }
+
+        // Update content
+        const list = container.querySelector('#knowledge-hub-list');
+        if (list) {
+            list.innerHTML = data.map(item => 
+                `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.title}</a> [${item.category}]</li>`
+            ).join('');
+        }
     };
 
     const setupStaticContent = () => {
@@ -127,12 +141,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Setup for Sprint Status
         const sprintContainer = document.getElementById("sprint-status");
-        const sprintHeaders = "sprint_name,status,blockers,end_date".split(','); // Corrected headers to match CSV
+        const sprintHeaders = "sprint_name,status,completed_points,total_points".split(',');
         const headerTooltips = {
             sprint_name: "The name of the development sprint.",
             status: "Current status of the sprint (e.g., In Progress, Completed).",
             completed_points: "Number of story points completed.",
-            total_points: "Total story points in the sprint."
+            total_points: "Total story points in the sprint.",
+            blockers: "Number of issues currently blocking progress." // Kept for potential future use
         };
         sprintContainer.innerHTML = `
             <h2 id="sprint-status-heading">Sprint Status</h2>
