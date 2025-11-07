@@ -80,91 +80,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     };
 
-    const renderAlerts = (data) => {
-        const container = document.getElementById("alerts");
-        if (!data) {
-            container.innerHTML = `<h2 id="alerts-heading">Alerts</h2><p>Could not load data.</p>`;
-            return;
-        }
-
-        // Add heading and filter input
-        container.innerHTML = `
-            <h2 id="alerts-heading">Alerts</h2>
-            <input type="text" id="alerts-filter" placeholder="Filter alerts..." aria-label="Filter alerts">
-            <ul id="alerts-list"></ul>
-        `;
-
-        const listElement = container.querySelector('#alerts-list');
-        const filterInput = container.querySelector('#alerts-filter');
-
-        const updateList = (alerts) => {
-            listElement.innerHTML = alerts.map(alert => 
-                `<li><strong>${alert.system} (${alert.severity}):</strong> ${alert.message}</li>`
-            ).join('');
-        };
-
-        // Initial render
-        updateList(data);
-
-        // Add event listener for filtering
-        filterInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredAlerts = data.filter(alert => alert.message.toLowerCase().includes(searchTerm) || alert.system.toLowerCase().includes(searchTerm));
-            updateList(filteredAlerts);
-        });
-    };
-
-    const renderSprintStatus = (data) => {
-        const container = document.getElementById("sprint-status");
-        if (!data) {
-            container.innerHTML = `<h2 id="sprint-status-heading">Sprint Status</h2><p>Could not load data.</p>`;
-            return;
-        }
-
-        const rows = data.trim().split('\n');
-        const headers = rows[0].split(',');
-        const sprintData = rows.slice(1).map(row => {
-            const values = row.split(',');
-            return headers.reduce((obj, header, index) => {
-                obj[header] = values[index];
-                return obj;
-            }, {});
-        });
-
-        const headerTooltips = {
-            sprint_name: "The name of the development sprint.",
-            status: "Current status of the sprint (e.g., In Progress, Completed).",
-            blockers: "Number of issues currently blocking progress.",
-            end_date: "The planned end date for the sprint."
-        };
-
-        container.innerHTML = `
-            <h2 id="sprint-status-heading">Sprint Status</h2>
-            <input type="text" id="sprint-filter" placeholder="Filter sprints..." aria-label="Filter sprints">
-            <table>
-                <thead><tr>${headers.map(header => `<th title="${headerTooltips[header] || ''}">${header.replace(/_/g, ' ')}</th>`).join('')}</tr></thead>
-                <tbody id="sprint-table-body"></tbody>
-            </table>
-        `;
-
-        const tableBody = container.querySelector('#sprint-table-body');
-        const filterInput = container.querySelector('#sprint-filter');
-
-        const updateTable = (sprints) => {
-            tableBody.innerHTML = sprints.map(sprint => 
-                `<tr>${headers.map(header => `<td>${sprint[header]}</td>`).join('')}</tr>`
-            ).join('');
-        };
-
-        updateTable(sprintData);
-
-        filterInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredSprints = sprintData.filter(sprint => Object.values(sprint).some(value => value.toLowerCase().includes(searchTerm)));
-            updateTable(filteredSprints);
-        });
-    };
-
     const renderUpcomingReleases = (data) => {
         const container = document.getElementById("upcoming-releases");
         if (!data) {
@@ -193,18 +108,91 @@ document.addEventListener("DOMContentLoaded", function() {
         container.innerHTML = content;
     };
 
+    const setupStaticContent = () => {
+        // Setup for Alerts
+        const alertsContainer = document.getElementById("alerts");
+        alertsContainer.innerHTML = `
+            <h2 id="alerts-heading">Alerts</h2>
+            <input type="text" id="alerts-filter" placeholder="Filter alerts..." aria-label="Filter alerts">
+            <ul id="alerts-list"></ul>
+        `;
+        document.getElementById('alerts-filter').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const listItems = document.querySelectorAll('#alerts-list li');
+            listItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Setup for Sprint Status
+        const sprintContainer = document.getElementById("sprint-status");
+        const sprintHeaders = "sprint_name,status,blockers,end_date".split(','); // Corrected headers to match CSV
+        const headerTooltips = {
+            sprint_name: "The name of the development sprint.",
+            status: "Current status of the sprint (e.g., In Progress, Completed).",
+            completed_points: "Number of story points completed.",
+            total_points: "Total story points in the sprint."
+        };
+        sprintContainer.innerHTML = `
+            <h2 id="sprint-status-heading">Sprint Status</h2>
+            <input type="text" id="sprint-filter" placeholder="Filter sprints..." aria-label="Filter sprints">
+            <table>
+                <thead><tr>${sprintHeaders.map(header => `<th title="${headerTooltips[header] || ''}">${header.replace(/_/g, ' ')}</th>`).join('')}</tr></thead>
+                <tbody id="sprint-table-body"></tbody>
+            </table>
+        `;
+        document.getElementById('sprint-filter').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#sprint-table-body tr');
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    };
+
     const fetchAllDataAndRender = () => {
         console.log("Refreshing dashboard data...");
         fetchData("data/system_health.json").then(renderSystemHealth);
-        fetchData("data/alerts.json").then(renderAlerts);
-        fetchData("data/sprint_status.csv").then(renderSprintStatus);
+        fetchData("data/alerts.json").then(data => {
+            if (!data) return;
+            const listElement = document.querySelector('#alerts-list');
+            if (listElement) {
+                listElement.innerHTML = data.map(alert => 
+                    `<li><strong>${alert.system} (${alert.severity}):</strong> ${alert.message}</li>`
+                ).join('');
+            }
+        });
+        fetchData("data/sprint_status.csv").then(data => {
+            if (!data) return;
+            const container = document.getElementById("sprint-status");
+            const tableBody = container.querySelector('#sprint-table-body');
+            const rows = data.trim().split('\n');
+            const headers = rows[0].split(',');
+            const sprintData = rows.slice(1).map(row => {
+                const values = row.split(',');
+                return headers.reduce((obj, header, index) => {
+                    obj[header] = values[index];
+                    return obj;
+                }, {});
+            });
+            if (tableBody) {
+                tableBody.innerHTML = sprintData.map(sprint => 
+                    `<tr>${headers.map(header => `<td>${sprint[header]}</td>`).join('')}</tr>`
+                ).join('');
+            }
+        });
         fetchData("data/releases.json").then(renderUpcomingReleases);
         fetchData("data/knowledge_hub.json").then(renderKnowledgeHub);
     };
 
-    // Initial load
+    // 1. Setup the static parts of the page and event listeners ONCE
+    setupStaticContent();
+
+    // 2. Fetch data for the initial load
     fetchAllDataAndRender();
 
-    // Refresh data every 30 seconds
+    // 3. Set an interval to refresh the data periodically
     setInterval(fetchAllDataAndRender, 30000);
 });
