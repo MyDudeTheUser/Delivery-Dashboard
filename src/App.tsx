@@ -1,14 +1,12 @@
 
+
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-
-function Dashboard() {
-  return <Typography variant="h4">Dashboard (Home)</Typography>;
-}
+import Dashboard from './pages/Dashboard';
 
 function About() {
   return <Typography variant="h4">About This Project</Typography>;
