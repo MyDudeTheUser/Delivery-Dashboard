@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchSystemHealth } from '../services/api';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -16,32 +16,21 @@ type SystemHealth = {
 };
 
 export default function SystemHealthWidget() {
-  const [data, setData] = useState<SystemHealth[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchSystemHealth()
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError('Failed to load system health data.');
-        setLoading(false);
-      });
-  }, []);
+  const { data, isLoading, isError } = useQuery<SystemHealth[]>({
+    queryKey: ['systemHealth'],
+    queryFn: fetchSystemHealth,
+  });
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>
       <Typography variant="h6">System Health</Typography>
-      {loading ? (
+      {isLoading ? (
         <Typography color="text.secondary">Loading...</Typography>
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
+      ) : isError ? (
+        <Typography color="error">Failed to load system health data.</Typography>
       ) : (
         <List>
-          {data.map((item) => (
+          {data?.map((item) => (
             <ListItem key={item.system}>
               <ListItemText
                 primary={item.system}

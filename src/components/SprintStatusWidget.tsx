@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchSprintStatus } from '../services/api';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -17,32 +17,21 @@ type Sprint = {
 };
 
 export default function SprintStatusWidget() {
-  const [data, setData] = useState<Sprint[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchSprintStatus()
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError('Failed to load sprint status.');
-        setLoading(false);
-      });
-  }, []);
+  const { data, isLoading, isError } = useQuery<Sprint[]>({
+    queryKey: ['sprintStatus'],
+    queryFn: fetchSprintStatus,
+  });
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>
       <Typography variant="h6">Sprint Status</Typography>
-      {loading ? (
+      {isLoading ? (
         <Typography color="text.secondary">Loading...</Typography>
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
+      ) : isError ? (
+        <Typography color="error">Failed to load sprint status.</Typography>
       ) : (
         <List>
-          {data.map((item, idx) => {
+          {data?.map((item, idx) => {
             const percent = Math.round((item.completed / item.total) * 100);
             return (
               <ListItem key={idx} alignItems="flex-start">

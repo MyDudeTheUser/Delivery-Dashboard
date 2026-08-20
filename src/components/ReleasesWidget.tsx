@@ -1,10 +1,11 @@
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import { fetchReleases } from '../services/api';
 
 type Release = {
   name: string;
@@ -12,32 +13,22 @@ type Release = {
   systems: string[];
 };
 
-// Mock data for releases
-const mockReleases: Release[] = [
-  { name: 'Release 1.0', date: '2025-12-15', systems: ['App1', 'App2'] },
-  { name: 'Release 1.1', date: '2026-01-10', systems: ['App3'] },
-];
-
 export default function ReleasesWidget() {
-  const [data, setData] = useState<Release[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Replace with fetchReleases() when available
-    setTimeout(() => {
-      setData(mockReleases);
-      setLoading(false);
-    }, 500);
-  }, []);
+  const { data, isLoading, isError } = useQuery<Release[]>({
+    queryKey: ['releases'],
+    queryFn: fetchReleases,
+  });
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>
       <Typography variant="h6">Release Calendar</Typography>
-      {loading ? (
+      {isLoading ? (
         <Typography color="text.secondary">Loading...</Typography>
+      ) : isError ? (
+        <Typography color="error">Failed to load releases.</Typography>
       ) : (
         <List>
-          {data.map((item, idx) => (
+          {data?.map((item, idx) => (
             <ListItem key={idx}>
               <ListItemText
                 primary={item.name}

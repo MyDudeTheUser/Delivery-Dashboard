@@ -1,35 +1,31 @@
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import { fetchEnterpriseMetrics } from '../services/api';
 
-// Mock data for enterprise metrics
-const mockMetrics = [
-  { label: 'Deployments', value: 12 },
-  { label: 'Incidents', value: 3 },
-  { label: 'Uptime (%)', value: 99.8 },
-];
+type Metric = {
+  label: string;
+  value: number;
+};
 
 export default function EnterpriseMetricsWidget() {
-  const [data, setData] = useState<typeof mockMetrics>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setData(mockMetrics);
-      setLoading(false);
-    }, 500);
-  }, []);
+  const { data, isLoading, isError } = useQuery<Metric[]>({
+    queryKey: ['enterpriseMetrics'],
+    queryFn: fetchEnterpriseMetrics,
+  });
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>
       <Typography variant="h6">Enterprise Metrics</Typography>
-      {loading ? (
+      {isLoading ? (
         <Typography color="text.secondary">Loading...</Typography>
+      ) : isError ? (
+        <Typography color="error">Failed to load enterprise metrics.</Typography>
       ) : (
         <Box>
-          {data.map((item, idx) => (
+          {data?.map((item, idx) => (
             <Typography key={idx} variant="body1">
               {item.label}: <b>{item.value}</b>
             </Typography>

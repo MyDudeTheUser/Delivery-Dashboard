@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchIncidents } from '../services/api';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -35,32 +35,21 @@ function getSeverityIcon(severity: string) {
 }
 
 export default function AlertsWidget() {
-  const [data, setData] = useState<Incident[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchIncidents()
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError('Failed to load alerts.');
-        setLoading(false);
-      });
-  }, []);
+  const { data, isLoading, isError } = useQuery<Incident[]>({
+    queryKey: ['incidents'],
+    queryFn: fetchIncidents,
+  });
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>
       <Typography variant="h6">Alerts & Events</Typography>
-      {loading ? (
+      {isLoading ? (
         <Typography color="text.secondary">Loading...</Typography>
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
+      ) : isError ? (
+        <Typography color="error">Failed to load alerts.</Typography>
       ) : (
         <List>
-          {data.map((item) => (
+          {data?.map((item) => (
             <ListItem key={item.id}>
               {getSeverityIcon(item.severity)}
               <ListItemText

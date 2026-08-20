@@ -50,4 +50,31 @@ export async function fetchSystemHealth() {
   }
 }
 
-// Add more API functions as needed for releases, knowledge hub, etc.
+// Example: Releases
+export async function fetchReleases() {
+  try {
+    const response = await apiClient.get('/releases');
+    return response.data;
+  } catch (error) {
+    console.warn('API call failed, falling back to mock data for releases', error);
+    return [
+      { name: 'Release 1.0', date: '2025-12-15', systems: ['App1', 'App2'] },
+      { name: 'Release 1.1', date: '2026-01-10', systems: ['App3'] },
+    ];
+  }
+}
+
+// Example: Enterprise Metrics
+export async function fetchEnterpriseMetrics() {
+  try {
+    const response = await apiClient.get('/metrics');
+    return response.data;
+  } catch (error) {
+    console.warn('API call failed, falling back to mock data for enterprise metrics', error);
+    return [
+      { label: 'Deployments', value: 12 },
+      { label: 'Incidents', value: 3 },
+      { label: 'Uptime (%)', value: 99.8 },
+    ];
+  }
+}
