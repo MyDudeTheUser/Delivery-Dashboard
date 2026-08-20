@@ -18,12 +18,18 @@ type SystemHealth = {
 export default function SystemHealthWidget() {
   const [data, setData] = useState<SystemHealth[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchSystemHealth().then((res) => {
-      setData(res);
-      setLoading(false);
-    });
+    fetchSystemHealth()
+      .then((res) => {
+        setData(res);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Failed to load system health data.');
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -31,6 +37,8 @@ export default function SystemHealthWidget() {
       <Typography variant="h6">System Health</Typography>
       {loading ? (
         <Typography color="text.secondary">Loading...</Typography>
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
       ) : (
         <List>
           {data.map((item) => (

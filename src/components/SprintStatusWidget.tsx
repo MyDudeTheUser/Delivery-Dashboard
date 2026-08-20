@@ -19,12 +19,18 @@ type Sprint = {
 export default function SprintStatusWidget() {
   const [data, setData] = useState<Sprint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchSprintStatus().then((res) => {
-      setData(res);
-      setLoading(false);
-    });
+    fetchSprintStatus()
+      .then((res) => {
+        setData(res);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Failed to load sprint status.');
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -32,6 +38,8 @@ export default function SprintStatusWidget() {
       <Typography variant="h6">Sprint Status</Typography>
       {loading ? (
         <Typography color="text.secondary">Loading...</Typography>
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
       ) : (
         <List>
           {data.map((item, idx) => {

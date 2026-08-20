@@ -37,12 +37,18 @@ function getSeverityIcon(severity: string) {
 export default function AlertsWidget() {
   const [data, setData] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchIncidents().then((res) => {
-      setData(res);
-      setLoading(false);
-    });
+    fetchIncidents()
+      .then((res) => {
+        setData(res);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Failed to load alerts.');
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -50,6 +56,8 @@ export default function AlertsWidget() {
       <Typography variant="h6">Alerts & Events</Typography>
       {loading ? (
         <Typography color="text.secondary">Loading...</Typography>
+      ) : error ? (
+        <Typography color="error">{error}</Typography>
       ) : (
         <List>
           {data.map((item) => (
