@@ -1,0 +1,39 @@
+name: CI - Security, Quality & Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    # Run a daily scan at midnight UTC
+    - cron: '0 0 * * *'
+
+jobs:
+  audit-and-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run npm audit (Security Scan)
+        run: npm audit --audit-level=high
+        
+      - name: Lint Codebase
+        run: npm run lint
+        
+      - name: Check Formatting
+        run: npx prettier --check "src/**/*.{ts,tsx,css}"
+        
+      - name: Verify Production Build
+        run: npm run build
