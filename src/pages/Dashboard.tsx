@@ -15,19 +15,19 @@ export default function Dashboard() {
         Delivery Dashboard
       </Typography>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <SystemHealthWidget />
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <AlertsWidget />
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <ReleasesWidget />
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <SprintStatusWidget />
         </Grid>
-        <Grid size={{ xs: 12 }}>
+        <Grid item xs={12}>
           <EnterpriseMetricsWidget />
         </Grid>
       </Grid>

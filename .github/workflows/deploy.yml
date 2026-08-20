@@ -1,0 +1,79 @@
+name: Deploy to Staging and Production
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [published]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run Unit Tests
+        run: npm run test
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.delivery-dashboard.example.com
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Deploy to Staging Server
+        run: |
+          echo "Deploying to Staging..."
+          # Replace this with actual deployment commands (e.g., AWS S3, Vercel, Netlify)
+          # Example: aws s3 sync ./dist s3://${{ secrets.STAGING_BUCKET_NAME }} --delete
+
+  deploy-production:
+    name: Deploy to Production
+    needs: build-and-test
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://delivery-dashboard.example.com
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Deploy to Production Server
+        run: |
+          echo "Deploying to Production..."
+          # Replace this with actual deployment commands
+          # Example: aws s3 sync ./dist s3://${{ secrets.PROD_BUCKET_NAME }} --delete
