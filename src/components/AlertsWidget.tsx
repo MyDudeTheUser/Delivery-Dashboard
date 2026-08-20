@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { fetchIncidents } from '../services/api';
 import List from '@mui/material/List';
@@ -24,17 +23,23 @@ type Incident = {
 
 function getSeverityColor(severity: string) {
   switch (severity.toLowerCase()) {
-    case 'high': return 'error';
-    case 'medium': return 'warning';
-    default: return 'info';
+    case 'high':
+      return 'error';
+    case 'medium':
+      return 'warning';
+    default:
+      return 'info';
   }
 }
 
 function getSeverityIcon(severity: string) {
   switch (severity.toLowerCase()) {
-    case 'high': return <ErrorIcon fontSize="small" color="error" sx={{ mr: 1 }} />;
-    case 'medium': return <WarningIcon fontSize="small" color="warning" sx={{ mr: 1 }} />;
-    default: return <InfoIcon fontSize="small" color="info" sx={{ mr: 1 }} />;
+    case 'high':
+      return <ErrorIcon fontSize="small" color="error" sx={{ mr: 1 }} />;
+    case 'medium':
+      return <WarningIcon fontSize="small" color="warning" sx={{ mr: 1 }} />;
+    default:
+      return <InfoIcon fontSize="small" color="info" sx={{ mr: 1 }} />;
   }
 }
 
@@ -43,10 +48,12 @@ export default function AlertsWidget() {
     queryKey: ['incidents'],
     queryFn: fetchIncidents,
   });
-  
+
   const [filter, setFilter] = useState<string>('All');
 
-  const filteredData = data?.filter(item => filter === 'All' || item.severity.toLowerCase() === filter.toLowerCase());
+  const filteredData = data?.filter(
+    (item) => filter === 'All' || item.severity.toLowerCase() === filter.toLowerCase(),
+  );
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>
@@ -71,18 +78,26 @@ export default function AlertsWidget() {
       ) : (
         <List>
           {filteredData?.length === 0 ? (
-            <Typography color="text.secondary" sx={{ p: 2 }}>No alerts found for this severity.</Typography>
+            <Typography color="text.secondary" sx={{ p: 2 }}>
+              No alerts found for this severity.
+            </Typography>
           ) : (
             filteredData?.map((item) => (
-            <ListItem key={item.id}>
-              {getSeverityIcon(item.severity)}
-              <ListItemText
-                primary={`${item.system} (${item.severity})`}
-                secondary={item.message}
-              />
-              <Chip label={item.severity} color={getSeverityColor(item.severity)} size="small" sx={{ ml: 2 }} />
-            </ListItem>
-          )))}
+              <ListItem key={item.id}>
+                {getSeverityIcon(item.severity)}
+                <ListItemText
+                  primary={`${item.system} (${item.severity})`}
+                  secondary={item.message}
+                />
+                <Chip
+                  label={item.severity}
+                  color={getSeverityColor(item.severity)}
+                  size="small"
+                  sx={{ ml: 2 }}
+                />
+              </ListItem>
+            ))
+          )}
         </List>
       )}
     </Paper>

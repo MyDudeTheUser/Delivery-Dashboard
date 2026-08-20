@@ -10,7 +10,7 @@ describe('App Component', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <App />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     );
     const headerElements = screen.getAllByText(/Delivery Dashboard/i);
     expect(headerElements.length).toBeGreaterThan(0);

@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { fetchSprintStatus } from '../services/api';
 import List from '@mui/material/List';
@@ -40,8 +39,14 @@ export default function SprintStatusWidget() {
                   secondary={`${item.status} (${item.completed}/${item.total} pts)`}
                 />
                 <Box sx={{ minWidth: 100, ml: 2 }}>
-                  <LinearProgress variant="determinate" value={percent} sx={{ height: 8, borderRadius: 4 }} />
-                  <Typography variant="caption" color="text.secondary">{percent}%</Typography>
+                  <LinearProgress
+                    variant="determinate"
+                    value={percent}
+                    sx={{ height: 8, borderRadius: 4 }}
+                  />
+                  <Typography variant="caption" color="text.secondary">
+                    {percent}%
+                  </Typography>
                 </Box>
               </ListItem>
             );

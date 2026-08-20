@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { fetchSystemHealth } from '../services/api';
 import List from '@mui/material/List';
@@ -39,11 +38,7 @@ export default function SystemHealthWidget() {
               <Chip
                 label={item.status}
                 color={
-                  item.status === 'ok'
-                    ? 'success'
-                    : item.status === 'warning'
-                    ? 'warning'
-                    : 'error'
+                  item.status === 'ok' ? 'success' : item.status === 'warning' ? 'warning' : 'error'
                 }
                 size="small"
                 sx={{ ml: 2 }}

@@ -1,5 +1,3 @@
-
-
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -21,8 +19,12 @@ function App() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Delivery Dashboard
             </Typography>
-            <Button color="inherit" component={Link} to="/">Dashboard</Button>
-            <Button color="inherit" component={Link} to="/about">About</Button>
+            <Button color="inherit" component={Link} to="/">
+              Dashboard
+            </Button>
+            <Button color="inherit" component={Link} to="/about">
+              About
+            </Button>
           </Toolbar>
         </AppBar>
         <Box sx={{ p: 3 }}>
