@@ -23,6 +23,34 @@ test.describe('Delivery Dashboard E2E', () => {
   //   await expect(page.getByText('Deployments', { exact: false })).toBeVisible({ timeout: 10000 });
   // });
 
+  test('should filter alerts by severity', async ({ page }) => {
+    // Wait for the mock data to load
+    await expect(page.getByText('CPU usage high')).toBeVisible({ timeout: 10000 });
+    
+    // Initially both High and Medium alerts should be visible (mock data has 1 of each)
+    await expect(page.getByText('CPU usage high')).toBeVisible(); // High
+    await expect(page.getByText('Memory warning')).toBeVisible(); // Medium
+    
+    // Open the filter dropdown
+    await page.getByLabel('Filter alerts by severity').click();
+    
+    // Select "High"
+    await page.getByRole('option', { name: 'High' }).click();
+    
+    // Verify only High alert is visible
+    await expect(page.getByText('CPU usage high')).toBeVisible();
+    await expect(page.getByText('Memory warning')).not.toBeVisible();
+    
+    // Open the filter dropdown again
+    await page.getByLabel('Filter alerts by severity').click();
+    
+    // Select "Low"
+    await page.getByRole('option', { name: 'Low' }).click();
+    
+    // Verify empty state message is shown
+    await expect(page.getByText('No alerts found for this severity.')).toBeVisible();
+  });
+
   test('should navigate to the About page', async ({ page }) => {
     // Click the About link in the navigation bar
     await page.getByRole('link', { name: 'About' }).click();

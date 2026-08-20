@@ -29,11 +29,26 @@ jobs:
       - name: Build Application
         run: npm run build
 
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Build Vercel Project
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist/
+          name: vercel-build
+          path: .vercel/
           retention-days: 1
 
   deploy-staging:
@@ -48,14 +63,17 @@ jobs:
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: vercel-build
+          path: .vercel
 
-      - name: Deploy to Staging Server
-        run: |
-          echo "Deploying to Staging..."
-          # Replace this with actual deployment commands (e.g., AWS S3, Vercel, Netlify)
-          # Example: aws s3 sync ./dist s3://${{ secrets.STAGING_BUCKET_NAME }} --delete
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Deploy to Vercel (Preview/Staging)
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   deploy-production:
     name: Deploy to Production
@@ -69,11 +87,14 @@ jobs:
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: vercel-build
+          path: .vercel
 
-      - name: Deploy to Production Server
-        run: |
-          echo "Deploying to Production..."
-          # Replace this with actual deployment commands
-          # Example: aws s3 sync ./dist s3://${{ secrets.PROD_BUCKET_NAME }} --delete
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Deploy to Vercel (Production)
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
