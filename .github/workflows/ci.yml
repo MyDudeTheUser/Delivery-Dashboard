@@ -35,5 +35,8 @@ jobs:
       - name: Check Formatting
         run: npx prettier --check "src/**/*.{ts,tsx,css}"
         
+      - name: Run Tests & Coverage
+        run: npm run test:coverage
+        
       - name: Verify Production Build
         run: npm run build

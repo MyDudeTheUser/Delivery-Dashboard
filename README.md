@@ -1,79 +1,69 @@
-# React + TypeScript + Vite
+# Delivery Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive React application built to provide a unified view of system health, incident alerts, release calendars, sprint statuses, and enterprise metrics.
 
-Currently, two official plugins are available:
+## 🚀 Technologies
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+*   **Framework:** React 19
+*   **Language:** TypeScript
+*   **Build Tool:** Vite
+*   **UI Library:** Material UI (MUI) v9
+*   **Data Fetching & Caching:** React Query (TanStack Query)
+*   **Testing:** Vitest & React Testing Library
+*   **Formatting & Linting:** ESLint & Prettier
 
-## Environment Variables
-The application relies on the following environment variables for API configuration. You can create a `.env` file in the root directory to override defaults:
-```env
-VITE_API_BASE_URL=https://api.yourdomain.com/v1
-```
+## 📦 Installation & Setup
 
-## React Compiler
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/MyDudeTheUser/Delivery-Dashboard.git
+   cd Delivery-Dashboard
+   ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. **Install dependencies:**
+   ```bash
+   npm install --legacy-peer-deps
+   ```
 
-## Expanding the ESLint configuration
+3. **Configure Environment Variables:**
+   Create a `.env` file in the root directory and specify your API base URL:
+   ```env
+   VITE_API_BASE_URL=https://api.yourdomain.com/v1
+   ```
+   *(Note: If the API is unreachable, the application gracefully falls back to mock data for development purposes.)*
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+4. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Scripts
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+*   `npm run dev` - Starts the Vite development server.
+*   `npm run build` - Compiles TypeScript and builds the production bundle.
+*   `npm run lint` - Runs ESLint to check for code quality issues.
+*   `npm run test` - Runs the Vitest test suite.
+*   `npm run test:coverage` - Runs the test suite and generates a coverage report.
+*   `npx prettier --write "src/**/*.{ts,tsx,css}"` - Formats the codebase.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🛡️ CI/CD & Security
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This repository utilizes GitHub Actions for continuous integration and security:
+*   **CI Pipeline (`ci.yml`):** Automatically runs on every push and pull request to `main`. It enforces:
+    *   Zero high/critical npm vulnerabilities (`npm audit`)
+    *   Code linting (`eslint`)
+    *   Code formatting (`prettier`)
+    *   Test execution and coverage (`vitest`)
+    *   Production build verification (`vite build`)
+*   **Dependabot:** Configured to automatically scan and create PRs for outdated npm packages and GitHub Actions weekly.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🏗️ Architecture
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+The application is structured around isolated, data-fetching widgets:
+*   `SystemHealthWidget`: Displays real-time CPU/Memory usage and status.
+*   `AlertsWidget`: Shows active incidents and their severity.
+*   `ReleasesWidget`: Provides a calendar of upcoming system releases.
+*   `SprintStatusWidget`: Tracks agile sprint progress and velocity.
+*   `EnterpriseMetricsWidget`: High-level KPIs (Deployments, Uptime).
+
+All data fetching is centralized in `src/services/api.ts` and cached globally using React Query to ensure high performance and minimize unnecessary network requests.
