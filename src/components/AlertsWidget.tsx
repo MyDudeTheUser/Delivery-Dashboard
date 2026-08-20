@@ -8,6 +8,8 @@ import Chip from '@mui/material/Chip';
 import WarningIcon from '@mui/icons-material/Warning';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 
 type Incident = {
   id: number;
