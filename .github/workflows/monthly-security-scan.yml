@@ -12,7 +12,7 @@ jobs:
     name: OWASP ZAP Full Scan
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run ZAP Full Scan against Production
         uses: zaproxy/action-full-scan@v0.10.0
