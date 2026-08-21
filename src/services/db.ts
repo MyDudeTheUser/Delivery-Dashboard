@@ -4,6 +4,7 @@ import type {
   Incident,
   Release,
   ScanHistory,
+  ScannerProfile,
   SprintStatus,
   SystemHealth,
 } from '../types/dashboard';
@@ -15,6 +16,7 @@ export class DashboardDB extends Dexie {
   sprintStatus!: Table<SprintStatus, number>;
   enterpriseMetrics!: Table<EnterpriseMetrics, number>;
   scanHistory!: Table<ScanHistory, number>;
+  scannerProfiles!: Table<ScannerProfile, number>;
 
   constructor() {
     super('DeliveryDashboardDB');
@@ -34,6 +36,16 @@ export class DashboardDB extends Dexie {
       sprintStatus: '++id, sprintName',
       enterpriseMetrics: '++id',
       scanHistory: '++id, timestamp, source',
+    });
+
+    this.version(3).stores({
+      systemHealth: '++id, component, status',
+      incidents: '++id, system, severity, source, timestamp',
+      releases: '++id, version, date, status',
+      sprintStatus: '++id, sprintName',
+      enterpriseMetrics: '++id',
+      scanHistory: '++id, timestamp, source',
+      scannerProfiles: '++id, name, type, enabled',
     });
   }
 }

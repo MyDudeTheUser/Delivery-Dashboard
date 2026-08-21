@@ -11,6 +11,7 @@ async function clearDashboardData() {
       db.sprintStatus,
       db.enterpriseMetrics,
       db.scanHistory,
+      db.scannerProfiles,
     ],
     async () => {
       await Promise.all([
@@ -20,6 +21,7 @@ async function clearDashboardData() {
         db.sprintStatus.clear(),
         db.enterpriseMetrics.clear(),
         db.scanHistory.clear(),
+        db.scannerProfiles.clear(),
       ]);
     },
   );

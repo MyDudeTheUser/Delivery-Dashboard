@@ -73,4 +73,10 @@ Widgets are fully reactive using `useLiveQuery` from `dexie-react-hooks`, meanin
 
 ### Signal Ingestion Pipeline
 
-To support multi-source enterprise scanning, the app includes a pluggable signal ingestion pipeline (`src/services/ingestion.ts`). Operators can navigate to the **Scan Operations** route (`/scans`) to manually upload JSON signal payloads (such as AWS GuardDuty findings or SonarQube quality scans). The pipeline normalizes these disparate formats into a common schema, saves the incidents to the local database, and maintains an audit log of all scan history.
+To support multi-source enterprise scanning, the app includes a pluggable signal ingestion pipeline (`src/services/ingestion.ts`). The pipeline normalizes disparate formats into a common schema, saves incidents to the local database, and maintains an audit log of all scan history.
+
+The **Scan Operations** route (`/scans`) supports three configurable enterprise scanning modes:
+
+1. **Interactive Local Scanning**: Connects directly to Microsoft 365 from the browser using delegated permissions. Operators provide an Entra Client ID and authorize the scopes they wish to scan (Email, Teams, SharePoint).
+2. **Managed Scheduled Scanning**: Defines the scope and schedule for future unattended background scans. The dashboard stores the plan but enforces secure readiness—the scan remains blocked until a secure backend and Entra administrator consent are deployed.
+3. **Export-and-Ingest Baseline**: Provides instructions for operators to run official Microsoft Graph PowerShell scripts locally, exporting their data securely before manually uploading the JSON payload for ingestion.

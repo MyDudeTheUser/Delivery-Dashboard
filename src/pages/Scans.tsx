@@ -16,6 +16,9 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import InteractiveScanner from '../components/InteractiveScanner';
+import ManagedScanner from '../components/ManagedScanner';
+import ImportScanner from '../components/ImportScanner';
 import { db } from '../services/db';
 import { ingestSignal, supportedSignalSources } from '../services/ingestion';
 
@@ -93,17 +96,22 @@ export default function Scans() {
         Scan Operations
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3, maxWidth: 780 }}>
-        Ingest supported enterprise scan signals into this browser&apos;s local database. New
-        findings immediately appear in the dashboard&apos;s Alerts &amp; Events widget and every
-        ingestion is recorded below for auditability.
+        Configure interactive local scans or ingest supported enterprise scan signals into this
+        browser&apos;s local database. New findings immediately appear in the dashboard&apos;s
+        Alerts &amp; Events widget and every ingestion is recorded below for auditability.
       </Typography>
+
+      <InteractiveScanner />
+      <ManagedScanner />
+      <ImportScanner />
 
       <Paper sx={{ p: 3, mb: 3 }} elevation={3}>
         <Typography variant="h6" gutterBottom>
           Ingest signal
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Supported adapters: {supportedSignalSources.join(' and ')}. Signal payloads are stored
+          Supported adapters: {supportedSignalSources.slice(0, -1).join(', ')}, and{' '}
+          {supportedSignalSources[supportedSignalSources.length - 1]}. Signal payloads are stored
           only in this browser&apos;s IndexedDB database.
         </Typography>
         <Stack spacing={2}>

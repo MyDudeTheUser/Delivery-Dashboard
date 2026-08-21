@@ -46,3 +46,24 @@ export interface ScanHistory {
   issuesFound: number;
   rawPayload?: string;
 }
+
+export type EnterpriseResource = 'Email' | 'Teams' | 'SharePoint' | 'Custom';
+export type ScannerExecutionMode = 'Interactive' | 'Managed' | 'Import';
+
+export interface ScannerProfile {
+  id?: number;
+  name: string;
+  type: 'Microsoft365' | 'Custom';
+  mode: ScannerExecutionMode;
+  resources: EnterpriseResource[];
+  enabled: boolean;
+  schedule?: string;
+  config: {
+    clientId?: string;
+    tenantId?: string;
+    scopes?: string[];
+    scriptUrl?: string;
+    [key: string]: unknown;
+  };
+  lastRun?: string;
+}

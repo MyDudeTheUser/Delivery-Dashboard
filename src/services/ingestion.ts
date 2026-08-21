@@ -88,7 +88,69 @@ class SonarQubeParser implements SignalParser {
   }
 }
 
-const parsers: SignalParser[] = [new GuardDutyParser(), new SonarQubeParser()];
+class MicrosoftGraphParser implements SignalParser {
+  readonly name = 'Microsoft Graph';
+
+  canParse(payload: unknown): boolean {
+    return (
+      isRecord(payload) &&
+      Array.isArray(payload.value) &&
+      isRecord(payload.value[0]) &&
+      typeof payload.value[0]['@odata.type'] === 'string'
+    );
+  }
+
+  parse(payload: unknown): NormalizedIncident[] {
+    if (!isRecord(payload) || !Array.isArray(payload.value)) {
+      return [];
+    }
+
+    return payload.value.filter(isRecord).map((item) => {
+      const type = asString(item['@odata.type'], '').toLowerCase();
+      let system = 'Microsoft 365';
+      let message = 'Unknown resource';
+      let timestamp = new Date().toISOString();
+      let severity: 'High' | 'Medium' | 'Low' = 'Low';
+
+      if (type.includes('chatmessage')) {
+        system = 'Teams Chat';
+        const body = isRecord(item.body)
+          ? asString(item.body.content, 'Empty message')
+          : 'Empty message';
+        message = body
+          .replace(/<[^>]*>?/gm, '')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .substring(0, 100); // Strip HTML
+        timestamp = asString(item.createdDateTime, timestamp);
+        severity = asString(item.importance, '').toLowerCase() === 'urgent' ? 'High' : 'Low';
+      } else if (type.includes('message')) {
+        system = 'Exchange Email';
+        message = asString(item.subject, 'Untitled Email');
+        timestamp = asString(item.receivedDateTime, timestamp);
+        severity = asString(item.importance, '').toLowerCase() === 'high' ? 'High' : 'Low';
+      } else if (type.includes('driveitem') || type.includes('listitem')) {
+        system = 'SharePoint / OneDrive';
+        message = asString(item.name, 'Untitled Document');
+        timestamp = asString(item.lastModifiedDateTime, timestamp);
+      }
+
+      return {
+        system,
+        severity,
+        message,
+        source: 'Microsoft Graph',
+        timestamp,
+      };
+    });
+  }
+}
+
+const parsers: SignalParser[] = [
+  new GuardDutyParser(),
+  new SonarQubeParser(),
+  new MicrosoftGraphParser(),
+];
 
 export const supportedSignalSources = parsers.map((parser) => parser.name);
 

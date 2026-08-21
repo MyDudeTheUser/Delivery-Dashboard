@@ -106,3 +106,54 @@ describe('signal ingestion', () => {
     await expect(db.scanHistory.count()).resolves.toBe(0);
   });
 });
+
+it('normalizes Microsoft Graph findings across Email, Teams, and SharePoint', async () => {
+  const result = await ingestSignal(
+    {
+      value: [
+        {
+          '@odata.type': '#microsoft.graph.message',
+          subject: 'URGENT: Production database down',
+          importance: 'high',
+          receivedDateTime: '2026-08-21T14:00:00.000Z',
+        },
+        {
+          '@odata.type': '#microsoft.graph.chatMessage',
+          body: { content: '<div>Hey team, the <b>API</b> is throwing 500s.</div>' },
+          importance: 'urgent',
+          createdDateTime: '2026-08-21T14:05:00.000Z',
+        },
+        {
+          '@odata.type': '#microsoft.graph.driveItem',
+          name: 'Incident_Report_August.docx',
+          lastModifiedDateTime: '2026-08-21T14:10:00.000Z',
+        },
+      ],
+    },
+    'Microsoft 365 Security Audit',
+  );
+
+  expect(result).toMatchObject({ issuesFound: 3, adapter: 'Microsoft Graph' });
+
+  const incidents = await db.incidents.orderBy('timestamp').toArray();
+  expect(incidents).toEqual([
+    expect.objectContaining({
+      system: 'Exchange Email',
+      severity: 'High',
+      message: 'URGENT: Production database down',
+      source: 'Microsoft Graph',
+    }),
+    expect.objectContaining({
+      system: 'Teams Chat',
+      severity: 'High',
+      message: 'Hey team, the API is throwing 500s.',
+      source: 'Microsoft Graph',
+    }),
+    expect.objectContaining({
+      system: 'SharePoint / OneDrive',
+      severity: 'Low',
+      message: 'Incident_Report_August.docx',
+      source: 'Microsoft Graph',
+    }),
+  ]);
+});
