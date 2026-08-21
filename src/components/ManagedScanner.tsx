@@ -44,6 +44,11 @@ export default function ManagedScanner() {
       return;
     }
 
+    // NOTE: Managed scans require app-only (application) permissions in Entra ID, which allow
+    // access to resources without a signed-in user. This requires administrator consent.
+    // To implement this securely, the dashboard would need to transmit this profile to a secure backend
+    // service (e.g., an Azure Function or AWS Lambda) that securely holds the Client Secret and executes
+    // the polling loop.
     const profile = {
       name: 'Microsoft 365 Managed Scan Plan',
       type: 'Microsoft365' as const,

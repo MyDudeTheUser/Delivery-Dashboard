@@ -29,6 +29,8 @@ export default function InteractiveScanner() {
     { severity: 'success' | 'error' | 'info'; message: string } | undefined
   >();
 
+  // Initialize the configuration form from the stored IndexedDB profile.
+  // We use a timeout to safely escape the synchronous React render cycle.
   useEffect(() => {
     if (!m365Profile || isEditing) {
       return;
@@ -104,7 +106,10 @@ export default function InteractiveScanner() {
       return;
     }
 
-    // In a real implementation, this would trigger MSAL login and Graph API calls
+    // NOTE: This is the injection point for the Microsoft Authentication Library (MSAL).
+    // Because this dashboard is local-first, it must use the OAuth 2.0 Authorization Code Flow with PKCE
+    // or the Implicit Grant flow (if enabled in Entra). The resulting access token would then be
+    // passed to the MicrosoftGraphParser via the Graph API endpoint.
     setNotice({
       severity: 'info',
       message:
