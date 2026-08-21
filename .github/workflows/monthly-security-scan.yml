@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run ZAP Full Scan against Production
-        uses: zaproxy/action-full-scan@v0.10.0
+        uses: zaproxy/action-full-scan@v0.13.0
         with:
           target: 'https://delivery-dashboard.example.com' # This should be replaced with the actual domain
           rules_file_name: '.zap/rules.tsv'
