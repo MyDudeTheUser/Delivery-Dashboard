@@ -1,0 +1,30 @@
+name: Monthly Security Scan
+
+on:
+  schedule:
+    # Run at 00:00 on the 1st of every month
+    - cron: '0 0 1 * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    name: OWASP ZAP Full Scan
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run ZAP Full Scan against Production
+        uses: zaproxy/action-full-scan@v0.10.0
+        with:
+          target: 'https://delivery-dashboard.example.com' # This should be replaced with the actual domain
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a'
+          
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        if: always() # Upload report even if the scan finds issues and fails the step
+        with:
+          name: zap-scan-report
+          path: '*report.html'
+          retention-days: 30

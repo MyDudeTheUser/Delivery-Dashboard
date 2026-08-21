@@ -28,6 +28,10 @@ jobs:
 
       - name: Build Application
         run: npm run build
+        env:
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
