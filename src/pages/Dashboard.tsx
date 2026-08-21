@@ -32,23 +32,23 @@ export default function Dashboard() {
         </button>
       </Box>
       <Grid container spacing={2}>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error MUI v9 Grid size prop type mismatch */}
         <Grid size={{ xs: 12, md: 6 }}>
           <SystemHealthWidget />
         </Grid>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error MUI v9 Grid size prop type mismatch */}
         <Grid size={{ xs: 12, md: 6 }}>
           <AlertsWidget />
         </Grid>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error MUI v9 Grid size prop type mismatch */}
         <Grid size={{ xs: 12, md: 6 }}>
           <ReleasesWidget />
         </Grid>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error MUI v9 Grid size prop type mismatch */}
         <Grid size={{ xs: 12, md: 6 }}>
           <SprintStatusWidget />
         </Grid>
-        {/* @ts-ignore */}
+        {/* @ts-expect-error MUI v9 Grid size prop type mismatch */}
         <Grid size={{ xs: 12 }}>
           <EnterpriseMetricsWidget />
         </Grid>
