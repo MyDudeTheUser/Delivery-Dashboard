@@ -11,11 +11,11 @@ test.describe('Delivery Dashboard E2E', () => {
     await expect(page.getByRole('heading', { name: 'Delivery Dashboard', exact: true })).toBeVisible();
 
     // Verify all widget headers are present
-    await expect(page.getByText('System Health')).toBeVisible();
-    await expect(page.getByText('Alerts & Events')).toBeVisible();
-    await expect(page.getByText('Release Calendar')).toBeVisible();
-    await expect(page.getByText('Sprint Status')).toBeVisible();
-    await expect(page.getByText('Enterprise Metrics')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'System Health', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Alerts & Events', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Release Calendar', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Sprint Status', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Enterprise Metrics', exact: true })).toBeVisible();
   });
 
   // test('should display mock data correctly', async ({ page }) => {
@@ -58,4 +58,34 @@ test.describe('Delivery Dashboard E2E', () => {
     // Verify we are on the About page
     await expect(page.getByRole('heading', { name: 'About This Project' })).toBeVisible();
   });
+});
+
+
+test('should ingest a supported JSON signal and record the scan locally', async ({ page }) => {
+  await page.goto('/scans');
+
+  await page.getByLabel('Scan source label').fill('SonarQube quality scan');
+  await page.getByLabel('Signal JSON').fill(
+    JSON.stringify({
+      issues: [
+        {
+          project: 'checkout-service',
+          severity: 'CRITICAL',
+          message: 'SQL injection risk',
+          creationDate: '2026-08-21T12:00:00.000Z',
+        },
+      ],
+    }),
+  );
+  await page.getByRole('button', { name: 'Ingest signal' }).click();
+
+  await expect(
+    page.getByText('1 issue ingested using the SonarQube adapter.'),
+  ).toBeVisible();
+  await expect(page.getByRole('table', { name: 'Scan history' })).toContainText(
+    'SonarQube quality scan',
+  );
+
+  await page.getByRole('link', { name: 'Dashboard' }).click();
+  await expect(page.getByText('SQL injection risk')).toBeVisible();
 });

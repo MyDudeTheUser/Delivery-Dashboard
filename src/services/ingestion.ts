@@ -1,81 +1,115 @@
 import { db, type Incident } from './db';
 
-// Interface for pluggable signal parsers
+type SignalPayload = Record<string, unknown>;
+type NormalizedIncident = Omit<Incident, 'id'>;
+
+function isRecord(value: unknown): value is SignalPayload {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function asString(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim().length > 0 ? value : fallback;
+}
+
+function asSeverity(value: unknown): 'High' | 'Medium' | 'Low' {
+  if (typeof value === 'number') {
+    return value > 7 ? 'High' : value > 4 ? 'Medium' : 'Low';
+  }
+
+  const normalizedSeverity = asString(value, 'Low').toUpperCase();
+  if (normalizedSeverity === 'BLOCKER' || normalizedSeverity === 'CRITICAL' || normalizedSeverity === 'HIGH') {
+    return 'High';
+  }
+  if (normalizedSeverity === 'MAJOR' || normalizedSeverity === 'MEDIUM') {
+    return 'Medium';
+  }
+  return 'Low';
+}
+
 export interface SignalParser {
-  canParse(payload: any): boolean;
-  parse(payload: any): Incident[];
+  readonly name: string;
+  canParse(payload: unknown): boolean;
+  parse(payload: unknown): NormalizedIncident[];
 }
 
-// Example Parser: AWS GuardDuty JSON format
 class GuardDutyParser implements SignalParser {
-  canParse(payload: any): boolean {
-    return payload && payload.source === 'aws.guardduty';
+  readonly name = 'AWS GuardDuty';
+
+  canParse(payload: unknown): boolean {
+    return isRecord(payload) && payload.source === 'aws.guardduty';
   }
 
-  parse(payload: any): Incident[] {
-    if (!payload.detail || !payload.detail.findings) return [];
-    
-    return payload.detail.findings.map((finding: any) => ({
-      system: `AWS - ${finding.resource?.resourceType || 'Unknown'}`,
-      severity: finding.severity > 7 ? 'High' : finding.severity > 4 ? 'Medium' : 'Low',
-      message: finding.title,
-      source: 'AWS GuardDuty',
-      timestamp: finding.createdAt || new Date().toISOString()
-    }));
-  }
-}
-
-// Example Parser: Generic SonarQube JSON format
-class SonarQubeParser implements SignalParser {
-  canParse(payload: any): boolean {
-    return payload && Array.isArray(payload.issues);
-  }
-
-  parse(payload: any): Incident[] {
-    return payload.issues.map((issue: any) => ({
-      system: issue.project || 'SonarQube Project',
-      severity: issue.severity === 'BLOCKER' || issue.severity === 'CRITICAL' ? 'High' : issue.severity === 'MAJOR' ? 'Medium' : 'Low',
-      message: issue.message,
-      source: 'SonarQube',
-      timestamp: issue.creationDate || new Date().toISOString()
-    }));
-  }
-}
-
-// Register parsers
-const parsers: SignalParser[] = [
-  new GuardDutyParser(),
-  new SonarQubeParser()
-];
-
-export async function ingestSignal(payload: any, sourceName: string = 'Manual Upload') {
-  let incidents: Incident[] = [];
-  let parsed = false;
-
-  for (const parser of parsers) {
-    if (parser.canParse(payload)) {
-      incidents = parser.parse(payload);
-      parsed = true;
-      break;
+  parse(payload: unknown): NormalizedIncident[] {
+    if (!isRecord(payload) || !isRecord(payload.detail) || !Array.isArray(payload.detail.findings)) {
+      return [];
     }
-  }
 
-  if (!parsed) {
-    throw new Error('No compatible parser found for the provided signal format.');
-  }
-
-  if (incidents.length > 0) {
-    // Save the normalized incidents
-    await db.incidents.bulkAdd(incidents);
-    
-    // Log the scan history
-    await db.scanHistory.add({
-      timestamp: new Date().toISOString(),
-      source: sourceName,
-      issuesFound: incidents.length,
-      rawPayload: JSON.stringify(payload)
+    return payload.detail.findings.filter(isRecord).map((finding) => {
+      const resource = isRecord(finding.resource) ? finding.resource : undefined;
+      return {
+        system: `AWS - ${asString(resource?.resourceType, 'Unknown resource')}`,
+        severity: asSeverity(finding.severity),
+        message: asString(finding.title, 'Untitled GuardDuty finding'),
+        source: 'AWS GuardDuty',
+        timestamp: asString(finding.createdAt, new Date().toISOString()),
+      };
     });
   }
-  
-  return incidents.length;
+}
+
+class SonarQubeParser implements SignalParser {
+  readonly name = 'SonarQube';
+
+  canParse(payload: unknown): boolean {
+    return isRecord(payload) && Array.isArray(payload.issues);
+  }
+
+  parse(payload: unknown): NormalizedIncident[] {
+    if (!isRecord(payload) || !Array.isArray(payload.issues)) {
+      return [];
+    }
+
+    return payload.issues.filter(isRecord).map((issue) => ({
+      system: asString(issue.project, 'SonarQube Project'),
+      severity: asSeverity(issue.severity),
+      message: asString(issue.message, 'Untitled SonarQube issue'),
+      source: 'SonarQube',
+      timestamp: asString(issue.creationDate, new Date().toISOString()),
+    }));
+  }
+}
+
+const parsers: SignalParser[] = [new GuardDutyParser(), new SonarQubeParser()];
+
+export const supportedSignalSources = parsers.map((parser) => parser.name);
+
+export async function ingestSignal(payload: unknown, sourceName = 'Manual upload') {
+  const parser = parsers.find((candidate) => candidate.canParse(payload));
+  if (!parser) {
+    throw new Error(
+      `Unsupported signal format. Supported adapters: ${supportedSignalSources.join(', ')}.`,
+    );
+  }
+
+  const incidents = parser.parse(payload);
+  const timestamp = new Date().toISOString();
+
+  await db.transaction('rw', db.incidents, db.scanHistory, async () => {
+    if (incidents.length > 0) {
+      await db.incidents.bulkAdd(incidents);
+    }
+
+    await db.scanHistory.add({
+      timestamp,
+      source: sourceName.trim() || 'Manual upload',
+      issuesFound: incidents.length,
+      rawPayload: JSON.stringify(payload),
+    });
+  });
+
+  return {
+    issuesFound: incidents.length,
+    adapter: parser.name,
+    timestamp,
+  };
 }

@@ -1,40 +1,49 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchSystemHealth } from '../services/api';
+import { useLiveQuery } from 'dexie-react-hooks';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import { db } from '../services/db';
 
-import { type SystemHealth } from '../services/db';
+function getHealthColor(status: string) {
+  switch (status.toLowerCase()) {
+    case 'healthy':
+      return 'success';
+    case 'warning':
+      return 'warning';
+    default:
+      return 'error';
+  }
+}
 
 export default function SystemHealthWidget() {
-  const { data, isLoading, isError } = useQuery<SystemHealth[]>({
-    queryKey: ['systemHealth'],
-    queryFn: fetchSystemHealth,
-  });
+  const systems = useLiveQuery(
+    () => db.systemHealth.orderBy('component').toArray(),
+    [],
+  );
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>
       <Typography variant="h6">System Health</Typography>
-      {isLoading ? (
-        <Typography color="text.secondary">Loading...</Typography>
-      ) : isError ? (
-        <Typography color="error">Failed to load system health data.</Typography>
+      {systems === undefined ? (
+        <Typography color="text.secondary">Loading system health...</Typography>
+      ) : systems.length === 0 ? (
+        <Typography color="text.secondary" sx={{ pt: 1 }}>
+          No system-health records have been stored locally.
+        </Typography>
       ) : (
         <List>
-          {data?.map((item) => (
-            <ListItem key={item.id}>
+          {systems.map((system) => (
+            <ListItem key={system.id}>
               <ListItemText
-                primary={item.component}
-                secondary={`Uptime: ${item.uptime}%`}
+                primary={system.component}
+                secondary={`Uptime: ${system.uptime}%`}
               />
               <Chip
-                label={item.status}
-                color={
-                  item.status.toLowerCase() === 'healthy' ? 'success' : item.status.toLowerCase() === 'warning' ? 'warning' : 'error'
-                }
+                label={system.status}
+                color={getHealthColor(system.status)}
                 size="small"
                 sx={{ ml: 2 }}
               />

@@ -5,6 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Dashboard from './pages/Dashboard';
+import Scans from './pages/Scans';
 
 function About() {
   return <Typography variant="h4">About This Project</Typography>;
@@ -22,6 +23,9 @@ function App() {
             <Button color="inherit" component={Link} to="/">
               Dashboard
             </Button>
+            <Button color="inherit" component={Link} to="/scans">
+              Scan Operations
+            </Button>
             <Button color="inherit" component={Link} to="/about">
               About
             </Button>
@@ -30,6 +34,7 @@ function App() {
         <Box sx={{ p: 3 }}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/scans" element={<Scans />} />
             <Route path="/about" element={<About />} />
           </Routes>
         </Box>

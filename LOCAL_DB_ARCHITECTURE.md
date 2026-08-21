@@ -37,8 +37,11 @@ class CustomParser implements SignalParser {
 }
 ```
 
-## API Service Layer
-The central API service (`src/services/api.ts`) has been refactored to read directly from the local IndexedDB using Dexie, seamlessly integrating with the existing React Query hooks in the widgets.
+## Reactive User Interface
+The dashboard widgets have been refactored to use `useLiveQuery` from `dexie-react-hooks`, replacing the previous React Query implementation. This ensures that the user interface instantly reacts whenever new signals are ingested into the database, eliminating the need for manual refreshes or background polling.
+
+## Scan Operations Workflow
+A dedicated `/scans` route provides a user interface for the local database. Operators can view a data grid of historical scans and manually upload signal payloads (such as GuardDuty or SonarQube JSON) to trigger the ingestion service. All operations are processed entirely within the browser's IndexedDB.
 
 ## Initial Seed Data
 Upon application startup, `main.tsx` invokes `seedDatabase()` which populates the local database with initial sample data if the tables are empty. This ensures the dashboard immediately renders meaningful data for demonstration and testing purposes.

@@ -62,7 +62,16 @@ export class DashboardDB extends Dexie {
       releases: '++id, version, date, status',
       sprintStatus: '++id, sprintName',
       enterpriseMetrics: '++id',
-      scanHistory: '++id, timestamp, source'
+      scanHistory: '++id, timestamp, source',
+    });
+
+    this.version(2).stores({
+      systemHealth: '++id, component, status',
+      incidents: '++id, system, severity, source, timestamp',
+      releases: '++id, version, date, status',
+      sprintStatus: '++id, sprintName',
+      enterpriseMetrics: '++id',
+      scanHistory: '++id, timestamp, source',
     });
   }
 }
