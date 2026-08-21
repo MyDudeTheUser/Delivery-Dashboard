@@ -14,12 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { useState } from 'react';
 
-type Incident = {
-  id: number;
-  system: string;
-  severity: string;
-  message: string;
-};
+import { type Incident } from '../services/db';
 
 function getSeverityColor(severity: string) {
   switch (severity.toLowerCase()) {

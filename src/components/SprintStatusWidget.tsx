@@ -8,15 +8,10 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-type Sprint = {
-  sprint: string;
-  status: string;
-  completed: number;
-  total: number;
-};
+import { type SprintStatus } from '../services/db';
 
 export default function SprintStatusWidget() {
-  const { data, isLoading, isError } = useQuery<Sprint[]>({
+  const { data, isLoading, isError } = useQuery<SprintStatus[]>({
     queryKey: ['sprintStatus'],
     queryFn: fetchSprintStatus,
   });
@@ -30,13 +25,13 @@ export default function SprintStatusWidget() {
         <Typography color="error">Failed to load sprint status.</Typography>
       ) : (
         <List>
-          {data?.map((item, idx) => {
-            const percent = Math.round((item.completed / item.total) * 100);
+          {data?.map((item) => {
+            const percent = item.progress;
             return (
-              <ListItem key={idx} alignItems="flex-start">
+              <ListItem key={item.id} alignItems="flex-start">
                 <ListItemText
-                  primary={item.sprint}
-                  secondary={`${item.status} (${item.completed}/${item.total} pts)`}
+                  primary={item.sprintName}
+                  secondary={`(${item.completedStoryPoints}/${item.totalStoryPoints} pts)`}
                 />
                 <Box sx={{ minWidth: 100, ml: 2 }}>
                   <LinearProgress

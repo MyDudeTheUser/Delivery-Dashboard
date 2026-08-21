@@ -6,11 +6,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { fetchReleases } from '../services/api';
 
-type Release = {
-  name: string;
-  date: string;
-  systems: string[];
-};
+import { type Release } from '../services/db';
 
 export default function ReleasesWidget() {
   const { data, isLoading, isError } = useQuery<Release[]>({
@@ -27,11 +23,11 @@ export default function ReleasesWidget() {
         <Typography color="error">Failed to load releases.</Typography>
       ) : (
         <List>
-          {data?.map((item, idx) => (
-            <ListItem key={idx}>
+          {data?.map((item) => (
+            <ListItem key={item.id}>
               <ListItemText
-                primary={item.name}
-                secondary={`${item.date} (${item.systems.join(', ')})`}
+                primary={item.version}
+                secondary={`${item.date} - ${item.status}`}
               />
             </ListItem>
           ))}

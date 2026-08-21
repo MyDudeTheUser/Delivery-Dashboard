@@ -4,13 +4,10 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import { fetchEnterpriseMetrics } from '../services/api';
 
-type Metric = {
-  label: string;
-  value: number;
-};
+import { type EnterpriseMetrics } from '../services/db';
 
 export default function EnterpriseMetricsWidget() {
-  const { data, isLoading, isError } = useQuery<Metric[]>({
+  const { data, isLoading, isError } = useQuery<EnterpriseMetrics[]>({
     queryKey: ['enterpriseMetrics'],
     queryFn: fetchEnterpriseMetrics,
   });
@@ -24,11 +21,19 @@ export default function EnterpriseMetricsWidget() {
         <Typography color="error">Failed to load enterprise metrics.</Typography>
       ) : (
         <Box>
-          {data?.map((item, idx) => (
-            <Typography key={idx} variant="body1">
-              {item.label}: <b>{item.value}</b>
-            </Typography>
-          ))}
+          {data && data.length > 0 && (
+            <>
+              <Typography variant="body1">
+                Deployments: <b>{data[0].deployments}</b>
+              </Typography>
+              <Typography variant="body1">
+                Incidents Resolved: <b>{data[0].incidentsResolved}</b>
+              </Typography>
+              <Typography variant="body1">
+                Avg Uptime: <b>{data[0].avgUptime}%</b>
+              </Typography>
+            </>
+          )}
         </Box>
       )}
     </Paper>

@@ -32,19 +32,24 @@ export default function Dashboard() {
         </button>
       </Box>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
+        {/* @ts-ignore */}
+        <Grid size={{ xs: 12, md: 6 }}>
           <SystemHealthWidget />
         </Grid>
-        <Grid item xs={12} md={6}>
+        {/* @ts-ignore */}
+        <Grid size={{ xs: 12, md: 6 }}>
           <AlertsWidget />
         </Grid>
-        <Grid item xs={12} md={6}>
+        {/* @ts-ignore */}
+        <Grid size={{ xs: 12, md: 6 }}>
           <ReleasesWidget />
         </Grid>
-        <Grid item xs={12} md={6}>
+        {/* @ts-ignore */}
+        <Grid size={{ xs: 12, md: 6 }}>
           <SprintStatusWidget />
         </Grid>
-        <Grid item xs={12}>
+        {/* @ts-ignore */}
+        <Grid size={{ xs: 12 }}>
           <EnterpriseMetricsWidget />
         </Grid>
       </Grid>

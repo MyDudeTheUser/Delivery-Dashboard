@@ -7,12 +7,7 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
-type SystemHealth = {
-  system: string;
-  cpu: number;
-  memory: number;
-  status: string;
-};
+import { type SystemHealth } from '../services/db';
 
 export default function SystemHealthWidget() {
   const { data, isLoading, isError } = useQuery<SystemHealth[]>({
@@ -30,15 +25,15 @@ export default function SystemHealthWidget() {
       ) : (
         <List>
           {data?.map((item) => (
-            <ListItem key={item.system}>
+            <ListItem key={item.id}>
               <ListItemText
-                primary={item.system}
-                secondary={`CPU: ${item.cpu}% | Memory: ${item.memory}%`}
+                primary={item.component}
+                secondary={`Uptime: ${item.uptime}%`}
               />
               <Chip
                 label={item.status}
                 color={
-                  item.status === 'ok' ? 'success' : item.status === 'warning' ? 'warning' : 'error'
+                  item.status.toLowerCase() === 'healthy' ? 'success' : item.status.toLowerCase() === 'warning' ? 'warning' : 'error'
                 }
                 size="small"
                 sx={{ ml: 2 }}
