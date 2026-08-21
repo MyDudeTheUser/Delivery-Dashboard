@@ -27,3 +27,10 @@ These variables must be added to your GitHub repository secrets so the CI/CD pip
     *   `SENTRY_AUTH_TOKEN`: A Sentry Internal Integration Auth Token with `project:releases` and `org:read` permissions. Create this in Sentry -> Settings -> Developer Settings -> Internal Integrations.
 
 Once these variables are configured, the next deployment will automatically upload source maps and begin tracking errors!
+
+## Verifying the Integration
+To verify that Sentry is correctly capturing errors in your production environment:
+1. Ensure your Vercel deployment has finished and the environment variables are active.
+2. Open the deployed Delivery Dashboard.
+3. In the top right corner of the dashboard, click the **"Trigger Sentry Test Error"** button.
+4. Open your Sentry project dashboard. You should see a new unresolved issue titled `Error: Sentry Test Error: This is a controlled test exception.` appear within a few seconds.
