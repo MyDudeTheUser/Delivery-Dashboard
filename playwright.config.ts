@@ -36,11 +36,11 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         launchOptions: {
-          args: ['--no-sandbox', '--disable-setuid-sandbox']
-        }
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        },
       },
     },
 

@@ -37,15 +37,11 @@ function getSeverityIcon(severity: string) {
 }
 
 export default function AlertsWidget() {
-  const incidents = useLiveQuery(
-    () => db.incidents.orderBy('timestamp').reverse().toArray(),
-    [],
-  );
+  const incidents = useLiveQuery(() => db.incidents.orderBy('timestamp').reverse().toArray(), []);
   const [filter, setFilter] = useState('All');
 
   const filteredIncidents = (incidents ?? []).filter(
-    (incident) =>
-      filter === 'All' || incident.severity.toLowerCase() === filter.toLowerCase(),
+    (incident) => filter === 'All' || incident.severity.toLowerCase() === filter.toLowerCase(),
   );
 
   return (

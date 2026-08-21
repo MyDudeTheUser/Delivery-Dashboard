@@ -20,7 +20,7 @@ jobs:
           target: 'https://delivery-dashboard.example.com' # This should be replaced with the actual domain
           rules_file_name: '.zap/rules.tsv'
           cmd_options: '-a'
-          
+
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
         if: always() # Upload report even if the scan finds issues and fails the step

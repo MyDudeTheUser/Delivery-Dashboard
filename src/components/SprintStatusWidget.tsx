@@ -9,10 +9,7 @@ import Box from '@mui/material/Box';
 import { db } from '../services/db';
 
 export default function SprintStatusWidget() {
-  const sprints = useLiveQuery(
-    () => db.sprintStatus.orderBy('sprintName').toArray(),
-    [],
-  );
+  const sprints = useLiveQuery(() => db.sprintStatus.orderBy('sprintName').toArray(), []);
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>

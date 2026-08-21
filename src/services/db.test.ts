@@ -4,12 +4,14 @@ import { db, seedDatabase } from './db';
 async function clearDashboardData() {
   await db.transaction(
     'rw',
-    db.systemHealth,
-    db.incidents,
-    db.releases,
-    db.sprintStatus,
-    db.enterpriseMetrics,
-    db.scanHistory,
+    [
+      db.systemHealth,
+      db.incidents,
+      db.releases,
+      db.sprintStatus,
+      db.enterpriseMetrics,
+      db.scanHistory,
+    ],
     async () => {
       await Promise.all([
         db.systemHealth.clear(),

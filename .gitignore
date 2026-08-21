@@ -29,3 +29,7 @@ dist-ssr
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Test coverage and local investigation artifacts
+/coverage/
+.local-*-findings.md

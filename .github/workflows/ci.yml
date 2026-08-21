@@ -2,9 +2,9 @@ name: CI - Security, Quality & Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
   schedule:
     # Run a daily scan at midnight UTC
     - cron: '0 0 * * *'
@@ -12,7 +12,7 @@ on:
 jobs:
   audit-and-build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,15 +28,15 @@ jobs:
 
       - name: Run npm audit (Security Scan)
         run: npm audit --audit-level=high
-        
+
       - name: Lint Codebase
         run: npm run lint
-        
+
       - name: Check Formatting
         run: npx prettier --check "src/**/*.{ts,tsx,css}"
-        
+
       - name: Run Tests & Coverage
         run: npm run test:coverage
-        
+
       - name: Verify Production Build
         run: npm run build

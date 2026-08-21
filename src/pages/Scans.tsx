@@ -29,10 +29,7 @@ function getErrorMessage(error: unknown) {
 }
 
 export default function Scans() {
-  const scans = useLiveQuery(
-    () => db.scanHistory.orderBy('timestamp').reverse().toArray(),
-    [],
-  );
+  const scans = useLiveQuery(() => db.scanHistory.orderBy('timestamp').reverse().toArray(), []);
   const [sourceName, setSourceName] = useState('Manual upload');
   const [payloadText, setPayloadText] = useState('');
   const [notice, setNotice] = useState<Notice | undefined>();
@@ -50,7 +47,8 @@ export default function Scans() {
       setSourceName(file.name);
       setNotice({
         severity: 'info',
-        message: 'JSON file loaded. Review the payload and select Ingest signal to save the findings locally.',
+        message:
+          'JSON file loaded. Review the payload and select Ingest signal to save the findings locally.',
       });
     } catch (error) {
       setNotice({ severity: 'error', message: getErrorMessage(error) });
@@ -95,9 +93,9 @@ export default function Scans() {
         Scan Operations
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 3, maxWidth: 780 }}>
-        Ingest supported enterprise scan signals into this browser&apos;s local database. New findings
-        immediately appear in the dashboard&apos;s Alerts &amp; Events widget and every ingestion is recorded
-        below for auditability.
+        Ingest supported enterprise scan signals into this browser&apos;s local database. New
+        findings immediately appear in the dashboard&apos;s Alerts &amp; Events widget and every
+        ingestion is recorded below for auditability.
       </Typography>
 
       <Paper sx={{ p: 3, mb: 3 }} elevation={3}>
@@ -105,8 +103,8 @@ export default function Scans() {
           Ingest signal
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Supported adapters: {supportedSignalSources.join(' and ')}. Signal payloads are stored only
-          in this browser&apos;s IndexedDB database.
+          Supported adapters: {supportedSignalSources.join(' and ')}. Signal payloads are stored
+          only in this browser&apos;s IndexedDB database.
         </Typography>
         <Stack spacing={2}>
           <TextField

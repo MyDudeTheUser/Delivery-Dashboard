@@ -7,10 +7,7 @@ import Typography from '@mui/material/Typography';
 import { db } from '../services/db';
 
 export default function ReleasesWidget() {
-  const releases = useLiveQuery(
-    () => db.releases.orderBy('date').toArray(),
-    [],
-  );
+  const releases = useLiveQuery(() => db.releases.orderBy('date').toArray(), []);
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>

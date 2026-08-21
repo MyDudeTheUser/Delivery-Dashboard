@@ -4,24 +4,19 @@
 **Date:** August 21, 2026
 
 ## Executive Summary
-The Delivery Dashboard has successfully transitioned to a stable, secure, local-first architecture using Dexie.js for IndexedDB persistence. The foundational schema, seed data, and a pluggable signal ingestion pipeline are in place. However, the current implementation leaves critical functionality unexposed to the user and retains significant technical debt. 
+
+The Delivery Dashboard has successfully transitioned to a stable, secure, local-first architecture using Dexie.js for IndexedDB persistence. The foundational schema, seed data, and a pluggable signal ingestion pipeline are in place. However, the current implementation leaves critical functionality unexposed to the user and retains significant technical debt.
 
 This roadmap outlines the prioritized next steps to mature the application, focusing on completing the local-first user experience, enforcing code quality, and removing unnecessary bloat.
 
 ## Priority 1: High (Feature Completion & UI Exposure)
-*All Priority 1 items have been completed. The dashboard is now fully reactive and supports local signal ingestion via the Scan Operations interface.*
+
+_All Priority 1 items have been completed. The dashboard is now fully reactive and supports local signal ingestion via the Scan Operations interface._
 
 ## Priority 2: Medium (Testing & Technical Debt)
-*All Priority 2 items have been completed. Unused dependencies were removed and automated tests now cover local persistence and signal normalization.*
+
+_All Priority 2 items have been completed. Unused dependencies were removed and automated tests now cover local persistence and signal normalization._
 
 ## Priority 3: Low (Developer Experience & Architecture)
-These improvements will help maintain the codebase as the team scales.
 
-**Centralize Type Definitions**
-TypeScript interfaces for domain models are currently defined directly inside the database service file. Moving all data models to a dedicated `src/types/` directory will cleanly separate domain models from database implementation details, making the codebase easier to navigate and maintain.
-
-**Enforce Code Formatting**
-Although a `.prettierrc` configuration file exists, the project lacks a formatting script and pre-commit enforcement. Adding a formatting script to `package.json` and configuring tools like Husky and lint-staged will ensure that formatting and linting rules are strictly enforced on every commit, maintaining a consistent code style across the team.
-
-**Update Core Documentation**
-The main `README.md` file suffers from documentation drift; it still describes the architecture in terms of external API fetching and mock data, entirely ignoring the new Dexie.js local-first implementation. The concepts detailed in the newly created `LOCAL_DB_ARCHITECTURE.md` should be merged into the main README to provide new developers with a single, accurate source of truth regarding the application's data flow.
+_All Priority 3 items have been completed. Domain models are centralized, formatting is strictly enforced via Husky pre-commit hooks, and the documentation has been updated to reflect the local-first architecture._

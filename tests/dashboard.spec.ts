@@ -8,14 +8,20 @@ test.describe('Delivery Dashboard E2E', () => {
 
   test('should load the dashboard and display all widgets', async ({ page }) => {
     // Verify the main header is present
-    await expect(page.getByRole('heading', { name: 'Delivery Dashboard', exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Delivery Dashboard', exact: true }),
+    ).toBeVisible();
 
     // Verify all widget headers are present
     await expect(page.getByRole('heading', { name: 'System Health', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Alerts & Events', exact: true })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Release Calendar', exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Release Calendar', exact: true }),
+    ).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Sprint Status', exact: true })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Enterprise Metrics', exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Enterprise Metrics', exact: true }),
+    ).toBeVisible();
   });
 
   // test('should display mock data correctly', async ({ page }) => {
@@ -26,27 +32,27 @@ test.describe('Delivery Dashboard E2E', () => {
   test('should filter alerts by severity', async ({ page }) => {
     // Wait for the mock data to load
     await expect(page.getByText('CPU usage high')).toBeVisible({ timeout: 10000 });
-    
+
     // Initially both High and Medium alerts should be visible (mock data has 1 of each)
     await expect(page.getByText('CPU usage high')).toBeVisible(); // High
     await expect(page.getByText('Memory warning')).toBeVisible(); // Medium
-    
+
     // Open the filter dropdown
     await page.getByLabel('Filter alerts by severity').click();
-    
+
     // Select "High"
     await page.getByRole('option', { name: 'High' }).click();
-    
+
     // Verify only High alert is visible
     await expect(page.getByText('CPU usage high')).toBeVisible();
     await expect(page.getByText('Memory warning')).not.toBeVisible();
-    
+
     // Open the filter dropdown again
     await page.getByLabel('Filter alerts by severity').click();
-    
+
     // Select "Low"
     await page.getByRole('option', { name: 'Low' }).click();
-    
+
     // Verify empty state message is shown
     await expect(page.getByText('No alerts found for this severity.')).toBeVisible();
   });
@@ -59,7 +65,6 @@ test.describe('Delivery Dashboard E2E', () => {
     await expect(page.getByRole('heading', { name: 'About This Project' })).toBeVisible();
   });
 });
-
 
 test('should ingest a supported JSON signal and record the scan locally', async ({ page }) => {
   await page.goto('/scans');
@@ -79,9 +84,7 @@ test('should ingest a supported JSON signal and record the scan locally', async 
   );
   await page.getByRole('button', { name: 'Ingest signal' }).click();
 
-  await expect(
-    page.getByText('1 issue ingested using the SonarQube adapter.'),
-  ).toBeVisible();
+  await expect(page.getByText('1 issue ingested using the SonarQube adapter.')).toBeVisible();
   await expect(page.getByRole('table', { name: 'Scan history' })).toContainText(
     'SonarQube quality scan',
   );

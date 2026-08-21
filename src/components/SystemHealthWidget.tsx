@@ -19,10 +19,7 @@ function getHealthColor(status: string) {
 }
 
 export default function SystemHealthWidget() {
-  const systems = useLiveQuery(
-    () => db.systemHealth.orderBy('component').toArray(),
-    [],
-  );
+  const systems = useLiveQuery(() => db.systemHealth.orderBy('component').toArray(), []);
 
   return (
     <Paper sx={{ p: 2, mb: 2 }} elevation={3}>
@@ -37,10 +34,7 @@ export default function SystemHealthWidget() {
         <List>
           {systems.map((system) => (
             <ListItem key={system.id}>
-              <ListItemText
-                primary={system.component}
-                secondary={`Uptime: ${system.uptime}%`}
-              />
+              <ListItemText primary={system.component} secondary={`Uptime: ${system.uptime}%`} />
               <Chip
                 label={system.status}
                 color={getHealthColor(system.status)}

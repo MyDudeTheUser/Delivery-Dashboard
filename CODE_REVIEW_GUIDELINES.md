@@ -4,7 +4,7 @@ This document outlines the expectations and best practices for conducting code r
 
 ## Expectations for the Author
 
-Authors should strive to keep Pull Requests small and focused. If a feature is exceptionally large, it should be broken down into smaller, independently reviewable chunks. When opening a PR, the author must provide adequate context by thoroughly filling out the `PULL_REQUEST_TEMPLATE.md`, focusing on explaining *why* a change was made rather than just *what* was changed.
+Authors should strive to keep Pull Requests small and focused. If a feature is exceptionally large, it should be broken down into smaller, independently reviewable chunks. When opening a PR, the author must provide adequate context by thoroughly filling out the `PULL_REQUEST_TEMPLATE.md`, focusing on explaining _why_ a change was made rather than just _what_ was changed.
 
 Before requesting a review from peers, authors are expected to perform a self-review of their own code diff to catch typos, leftover debug statements, and obvious logical flaws. Furthermore, a review should not be requested until all automated GitHub Actions—including linting, testing, and building—have successfully passed.
 
@@ -23,6 +23,6 @@ Security is paramount; reviewers must ensure no hardcoded secrets, API keys, or 
 
 ## Communication Etiquette
 
-Effective code reviews rely on positive communication. Reviewers should frame feedback as constructive suggestions rather than demands. For example, phrasing a comment as "Consider extracting this logic into a hook" is far more collaborative than "Move this to a hook." 
+Effective code reviews rely on positive communication. Reviewers should frame feedback as constructive suggestions rather than demands. For example, phrasing a comment as "Consider extracting this logic into a hook" is far more collaborative than "Move this to a hook."
 
 Reviewers are encouraged to ask questions when they do not understand a specific implementation choice, such as complex regular expressions. Finally, code review is not solely for finding flaws; reviewers should actively praise elegant solutions, excellent test coverage, and well-written documentation.

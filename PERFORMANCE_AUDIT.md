@@ -9,9 +9,9 @@ A performance audit was conducted on the Delivery Dashboard frontend application
 
 ## 2. Current State Analysis
 
-*   **Production Bundle Size:** The main JavaScript chunk is currently ~460 KB uncompressed (approx. 150 KB gzipped).
-*   **Code Splitting:** The application currently relies entirely on a single monolithic bundle (`index-[hash].js`). There is no code splitting implemented.
-*   **Rendering Optimization:** The application does not currently utilize React's memoization techniques (`React.memo`, `useMemo`, `useCallback`), which could lead to unnecessary re-renders of complex dashboard widgets when global state changes.
+- **Production Bundle Size:** The main JavaScript chunk is currently ~460 KB uncompressed (approx. 150 KB gzipped).
+- **Code Splitting:** The application currently relies entirely on a single monolithic bundle (`index-[hash].js`). There is no code splitting implemented.
+- **Rendering Optimization:** The application does not currently utilize React's memoization techniques (`React.memo`, `useMemo`, `useCallback`), which could lead to unnecessary re-renders of complex dashboard widgets when global state changes.
 
 ## 3. Prioritized Optimization Opportunities
 
@@ -19,24 +19,28 @@ A performance audit was conducted on the Delivery Dashboard frontend application
 
 **1. Implement Route-Based Code Splitting**
 Currently, all pages (e.g., `Dashboard`, `About`) and their child components are bundled into a single file. As more routes are added, the initial load time will degrade.
-*   **Action:** Use `React.lazy` and `Suspense` in `App.tsx` to lazy-load route components.
-    ```tsx
-    import { lazy, Suspense } from 'react';
-    const Dashboard = lazy(() => import('./pages/Dashboard'));
-    const About = lazy(() => import('./pages/About'));
-    
-    // Wrap <Routes> in <Suspense fallback={<LoadingSpinner />}>
-    ```
+
+- **Action:** Use `React.lazy` and `Suspense` in `App.tsx` to lazy-load route components.
+
+  ```tsx
+  import { lazy, Suspense } from 'react';
+  const Dashboard = lazy(() => import('./pages/Dashboard'));
+  const About = lazy(() => import('./pages/About'));
+
+  // Wrap <Routes> in <Suspense fallback={<LoadingSpinner />}>
+  ```
 
 **2. Lazy Load Heavy Dashboard Widgets**
 If certain widgets (e.g., future charting widgets using heavy libraries) are not immediately visible "above the fold," they should be lazy-loaded.
-*   **Action:** Apply `React.lazy` to individual heavy widgets within `Dashboard.tsx`.
+
+- **Action:** Apply `React.lazy` to individual heavy widgets within `Dashboard.tsx`.
 
 ### Priority 2: Medium (Rendering Efficiency)
 
 **1. Memoize Widget Components**
 Dashboard widgets currently re-render whenever the parent `Dashboard` component re-renders. While React Query handles data caching efficiently, the UI components themselves still execute their render functions.
-*   **Action:** Wrap purely presentational components or heavy widgets in `React.memo()` to prevent re-rendering unless their specific props change.
+
+- **Action:** Wrap purely presentational components or heavy widgets in `React.memo()` to prevent re-rendering unless their specific props change.
 
 **2. Optimize Material UI Imports**
 Ensure that Material UI components are imported efficiently. While modern bundlers (like Vite with Rollup) generally handle tree-shaking well with named imports (e.g., `import { Box } from '@mui/material'`), verifying that the bundler isn't pulling in the entire MUI library is crucial as the app grows.

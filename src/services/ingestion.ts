@@ -1,4 +1,5 @@
-import { db, type Incident } from './db';
+import { db } from './db';
+import type { Incident } from '../types/dashboard';
 
 type SignalPayload = Record<string, unknown>;
 type NormalizedIncident = Omit<Incident, 'id'>;
@@ -17,7 +18,11 @@ function asSeverity(value: unknown): 'High' | 'Medium' | 'Low' {
   }
 
   const normalizedSeverity = asString(value, 'Low').toUpperCase();
-  if (normalizedSeverity === 'BLOCKER' || normalizedSeverity === 'CRITICAL' || normalizedSeverity === 'HIGH') {
+  if (
+    normalizedSeverity === 'BLOCKER' ||
+    normalizedSeverity === 'CRITICAL' ||
+    normalizedSeverity === 'HIGH'
+  ) {
     return 'High';
   }
   if (normalizedSeverity === 'MAJOR' || normalizedSeverity === 'MEDIUM') {
@@ -40,7 +45,11 @@ class GuardDutyParser implements SignalParser {
   }
 
   parse(payload: unknown): NormalizedIncident[] {
-    if (!isRecord(payload) || !isRecord(payload.detail) || !Array.isArray(payload.detail.findings)) {
+    if (
+      !isRecord(payload) ||
+      !isRecord(payload.detail) ||
+      !Array.isArray(payload.detail.findings)
+    ) {
       return [];
     }
 
